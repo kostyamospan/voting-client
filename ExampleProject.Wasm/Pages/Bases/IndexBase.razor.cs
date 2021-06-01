@@ -18,12 +18,9 @@ namespace ExampleProject.Wasm.Pages
 {
     public class IndexBase : ComponentBase
     {
-        bool EthereumAvailable { get; set; }
-        string SelectedAccount { get; set; }
-
         public string ContractAddress { get; set; }
 
-        public string[] Votings { get; set; }
+        public List<string> Votings { get; set; }
 
         protected string AuthenticatedAccount { get; set; }
 
@@ -35,16 +32,8 @@ namespace ExampleProject.Wasm.Pages
         [Inject] AbiService AbiService { get; set; }
 
 
-
-
-
-
-
         protected override async Task OnInitializedAsync()
         {
-            _ethereumHostProvider.SelectedAccountChanged += HostProvider_SelectedAccountChanged;
-            EthereumAvailable = await _ethereumHostProvider.CheckProviderAvailabilityAsync();
-
             StringValues initContract;
 
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
@@ -57,12 +46,6 @@ namespace ExampleProject.Wasm.Pages
             base.OnInitialized();
         }
 
-        private async Task HostProvider_SelectedAccountChanged(string account)
-        {
-            SelectedAccount = account;
-            this.StateHasChanged();
-        }
-
 
         public async Task GetVotings()
         {
@@ -70,16 +53,13 @@ namespace ExampleProject.Wasm.Pages
 
             string abi = await AbiService.GetAbiContractAsync(AbiService.VotingContractFileName);
 
-            var contract = web3.Eth.GetContract(abi, ContractAddress);
+            /*var contract = web3.Eth.GetContract(abi, ContractAddress);
 
             var func = contract.GetFunction("getVotingsCount");
 
-            var res = await func.CallAsync<int>();
+            var res = await func.CallAsync<int>();*/
 
-            VotingsCount = res;
-
-            Console.WriteLine(res);
+            VotingsCount = await Web3HelperService.CallAsync<int>(web3, ContractAddress, abi, "getVotingsCount");
         }
-
     }
 }

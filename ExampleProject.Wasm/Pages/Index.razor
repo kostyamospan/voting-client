@@ -19,9 +19,9 @@
     <div class="voting-list">
         @if (Votings != null)
         {
-            @foreach (var voting in Votings)
+            @for(int i = 0; i< VotingsCount;i++)
             {
-                <div>voting</div>
+                <a href="@($"/voting?id={i}")"><div>i</div></a>
             }
 
         }
