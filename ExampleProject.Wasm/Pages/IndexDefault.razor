@@ -28,21 +28,16 @@
 
     protected void OnValidSubmit()
     {
-        nav.NavigateTo($"/contract/{_formModel.ContractAddress}");
+        nav.NavigateTo($"/contract?contract={_formModel.ContractAddress}");
     }
 
 
     protected class FormModel
     {
         [Required]
-        //[StringLength(10, ErrorMessage = "Name is too long.")]
         [RegularExpression("^0x[a-zA-Z0-9]{40}$", ErrorMessage = "Address must start with 0x and be exactly 42 symbols long")]
         public string ContractAddress { get; set; }
 
     }
 }
-
-
-
-
 

@@ -1,0 +1,30 @@
+﻿@page "/voting" 
+
+<h1>Voting</h1>
+
+<h3>Author: @Author</h3>
+
+@foreach (var prop in Proposals)
+{
+    <div class="row">
+        <span>@prop</span>
+        <button @onclick="@(()=>OnVoteClick(prop))"></button>
+    </div>
+}
+
+
+
+
+
+@code {
+    public string Author = "asdasdasd";
+
+    public string[] Proposals = new[] { "prop1", "prop2", "prop3" };
+
+
+    public void OnVoteClick(string prop)
+    {
+
+    }
+
+}

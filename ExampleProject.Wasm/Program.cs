@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Nethereum.Metamask.Blazor;
 using Nethereum.Metamask;
 using FluentValidation;
+using ExampleProject.Wasm.Services;
 
 namespace ExampleProject.Wasm
 {
@@ -22,9 +23,15 @@ namespace ExampleProject.Wasm
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+            builder.Services.AddScoped(sp => new AbiService(builder.HostEnvironment.BaseAddress));
+
+
             builder.Services.AddSingleton<IMetamaskInterop, MetamaskBlazorInterop>();
+
             builder.Services.AddSingleton<MetamaskInterceptor>();
             builder.Services.AddSingleton<MetamaskHostProvider>();
+
             builder.Services.AddSingleton<IEthereumHostProvider>(serviceProvider =>
             {
                 return serviceProvider.GetService<MetamaskHostProvider>();
