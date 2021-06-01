@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace ExampleProject.Wasm.Pages.Bases
 {
+
     public class VotingBase : ComponentBase
     {
         public int VotingId { get; set; }
@@ -19,8 +20,7 @@ namespace ExampleProject.Wasm.Pages.Bases
 
         public List<string> Proposals { get; set; }
 
-
-
+        public string SelectedAccount { get; private set; }
 
         [Inject] IEthereumHostProvider _ethereumHostProvider { get; set; }
         [Inject] NethereumAuthenticator _nethereumAuthenticator { get; set; }
@@ -28,11 +28,16 @@ namespace ExampleProject.Wasm.Pages.Bases
         [Inject] AbiService AbiService { get; set; }
 
 
-        public void OnVoteClick(string prop)
+        public async Task OnVoteClick(string prop)
         {
-
+            await this.Vote(prop);
         }
 
+
+        private async Task OnSelectedAccountChanged(string arg)
+        {
+            SelectedAccount = arg;
+        }
 
         public async Task LoadAllProposalsAsync()
         {
@@ -44,10 +49,27 @@ namespace ExampleProject.Wasm.Pages.Bases
         }
 
 
-        private async Task Vote() { }
+        private async Task Vote(string prop)
+        {
+            var web3 = new Web3("http://localhost:8545");
+
+            string abi = await AbiService.GetAbiContractAsync(AbiService.VotingContractFileName);
+
+            await Web3HelperService.CreateTransactionAsync(
+                web3,
+                SelectedAccount,
+                ContractAddress,
+                abi,
+                "vote",
+                VotingId,
+                new Nethereum.ABI.Encoders.Bytes32TypeEncoder().Encode(prop));
+        }
 
         protected override async Task OnInitializedAsync()
         {
+            _ethereumHostProvider.SelectedAccountChanged += OnSelectedAccountChanged;
+
+
             StringValues initId;
             StringValues initContract;
 

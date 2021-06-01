@@ -26,7 +26,6 @@ namespace ExampleProject.Wasm
 
             builder.Services.AddScoped(sp => new AbiService(builder.HostEnvironment.BaseAddress));
 
-
             builder.Services.AddSingleton<IMetamaskInterop, MetamaskBlazorInterop>();
 
             builder.Services.AddSingleton<MetamaskInterceptor>();

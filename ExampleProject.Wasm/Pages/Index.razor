@@ -5,25 +5,22 @@
 
 <div class="main column">
     <div class="row">
-        <div class="btn btn-create">Create voting</div>
+        <div class="btn btn-create" @onclick="OnCreateBtnClick">Create voting</div>
 
-        <div class="btn btn-get-all">Get all votings</div>
+        <div class="btn btn-get-all" @onclick="OnGetVotingsBtnClick">Get all votings</div>
     </div>
 
-    <button @onclick="GetVotings"></button>
+    @if (VotingsCount > 0)
+    {
+        <ul class="voting-list">
 
-
-
-    <span>@VotingsCount</span>
-
-    <div class="voting-list">
-        @if (Votings != null)
-        {
-            @for(int i = 0; i< VotingsCount;i++)
+            @for (int i = 0; i < VotingsCount; i++)
             {
-                <a href="@($"/voting?id={i}")"><div>i</div></a>
+                <a href="@($"/voting?id={i}&contract={ContractAddress}")"><li>@i</li></a>
             }
 
-        }
-    </div>
+        </ul>
+    }
+
+
 </div>
