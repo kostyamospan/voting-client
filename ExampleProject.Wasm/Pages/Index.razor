@@ -1,0 +1,45 @@
+﻿@page "/contract"
+
+
+<h1>INDEX PAGE</h1>
+
+<div class="btn btn-primary" @onclick="TransferEtherAsync">
+    Send test ether
+</div>
+
+
+<div class="main column">
+    <div class="row">
+        <div class="btn btn-create">Create voting</div>
+
+        <div class="btn btn-get-all">Get all votings</div>
+    </div>
+
+    <div class="voting-list">
+
+        <div class="voting-list-el">EL</div>
+        <div class="voting-list-el">EL</div>
+        <div class="voting-list-el">EL</div>
+        <div class="voting-list-el">EL</div>
+        <div class="voting-list-el">EL</div>
+        <div class="voting-list-el">EL</div>
+        <div class="voting-list-el">EL</div>
+
+    </div>
+</div>
+
+
+@*@code {
+    protected async Task TransferEtherAsync()
+    {
+        try
+        {
+            var web3 = await _ethereumHostProvider.GetWeb3Async();
+
+            var hash= await web3.Eth.GetEtherTransferService().TransferEtherAsync("0x13f022d72158410433cbd66f5dd8bf6d2d129924", 0.001m);
+        }
+        catch (Exception ex)
+        {
+        }
+    }
+}*@

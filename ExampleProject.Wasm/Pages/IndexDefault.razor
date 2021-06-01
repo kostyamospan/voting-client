@@ -1,0 +1,48 @@
+﻿@page "/"
+@inject NavigationManager nav
+@using System.ComponentModel.DataAnnotations;
+
+<div class="column align-items-center justify-content-center">
+
+    <h1>CHOSE A CONTRACT ADDRESS</h1>
+
+    <EditForm Model="@_formModel" OnValidSubmit="@OnValidSubmit" class="column">
+        <DataAnnotationsValidator />
+
+        <div class="row">
+            <InputText class="address-input" @bind-Value=_formModel.ContractAddress placeholder="Contract Address" />
+
+            <div class="mx-1"></div>
+            <input type="submit" class="btn btn-primary align-self-center" value="GO" />
+        </div>
+        <ValidationMessage For="() => _formModel.ContractAddress" />
+    </EditForm>
+</div>
+
+
+
+@code {
+
+    protected FormModel _formModel = new();
+
+
+    protected void OnValidSubmit()
+    {
+        nav.NavigateTo($"/contract/{_formModel.ContractAddress}");
+    }
+
+
+    protected class FormModel
+    {
+        [Required]
+        //[StringLength(10, ErrorMessage = "Name is too long.")]
+        [RegularExpression("^0x[a-zA-Z0-9]{40}$", ErrorMessage = "Address must start with 0x and be exactly 42 symbols long")]
+        public string ContractAddress { get; set; }
+
+    }
+}
+
+
+
+
+

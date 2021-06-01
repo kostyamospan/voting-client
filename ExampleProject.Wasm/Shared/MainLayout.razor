@@ -1,0 +1,38 @@
+﻿@inherits LayoutComponentBase
+
+@inject IJSRuntime jsRuntime;
+@inject IEthereumHostProvider _ethereumHostProvider;
+@inject NethereumAuthenticator  _nethereumAuthenticator;
+@using Nethereum.Hex.HexTypes;
+
+@if (EthereumAvailable == true)
+{
+
+<div class="page">
+    <div class="main">
+        <div class="top-row px-4">
+            <Metamask />
+        </div>
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>
+</div>      
+}
+else
+{
+
+    <h1>Have no connection to Metamask</h1>
+}
+
+
+
+
+@code {
+    bool EthereumAvailable { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        EthereumAvailable = await _ethereumHostProvider.CheckProviderAvailabilityAsync();
+    }
+} 
