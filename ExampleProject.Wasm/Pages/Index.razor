@@ -25,11 +25,10 @@
                         <a href="" @onclick=@(()=>
                                               {
                                                   State.Voting = Votings[index];
-                                                  NavManager.NavigateTo($"/voting?id={index}&contract={ContractAddress}&isVotingOver={Votings[index].VotingStatus == (int)VotingStatus.Finished}&winnerProposal={Votings[index].WinnerProposal}");
+                                                  NavManager.NavigateTo($"/voting?id={index}&contract={ContractAddress}&isVotingOver={Votings[index].VotingStatus == (int)VotingStatus.Finished}&winnerProposal={Votings[index].WinnerProposal}&start={Votings[index].CreationTimestamp}&end={Votings[index].CreationTimestamp + Votings[index].Duration}");
                                               }) @onclick:preventDefault>
                             @index
                         </a>
-                        @*Votings[index].WinnerProposal is null ? "" :  $""*@
                         <ul>
                             <li>Status: @((VotingStatus)Votings[index].VotingStatus)</li>
                             <li>Start: @(DateTimeOffset.FromUnixTimeSeconds(Votings[index].CreationTimestamp).DateTime.ToString())</li>
@@ -52,7 +51,7 @@
                             }
                         </ul>
                     </div>
-                    @if (Votings[index].VotingStatus != (int)VotingStatus.Finished)
+                    @if (Votings[index].VotingStatus != (int)VotingStatus.Finished && (Votings[index].CreationTimestamp + Votings[index].Duration) < DateTimeOffset.Now.ToUnixTimeSeconds())
                     {
 
                         <div>

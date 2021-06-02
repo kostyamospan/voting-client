@@ -42,7 +42,7 @@ else if (IsVoted)
                     </td>
 
                     <td>
-                        @if (!IsVoted && !IsVotingOver)
+                        @if (!IsVoted && !IsVotingOver && EndTimestamp > DateTimeOffset.Now)
                         {
                             <button class="btn btn-outline-primary" @onclick="@(async () => await OnVoteClick(prop.Proposal))">Vote</button>
                         }
@@ -59,9 +59,15 @@ else if (IsVoted)
     {
         <h3 style="color:green">Winner proposal is: @WinnerProposal</h3>
     }
+    else if (EndTimestamp < DateTimeOffset.Now)
+    {
+        <div style="color:brown">Voting time is over, but it`s not finished yet</div>
+
+        <button class="btn btn-outline-secondary" @onclick="(async () => await OnEndVotingsBtnClick())">End Voting</button>
+    }
     else
     {
-        <button class="btn btn-outline-secondary" @onclick="(async ()=> await OnEndVotingsBtnClick())">End Voting</button>
+        <div style="color:cornflowerblue">Voting in progress</div>
     }
 
 }

@@ -31,6 +31,11 @@ namespace VotingClient.Pages.Bases
 
         public string SelectedAccount { get; private set; }
 
+        public DateTimeOffset StartTimestamp { get; set; }
+        public DateTimeOffset EndTimestamp { get; set; }
+
+
+
         [Inject] public GlobalState GlobalState { get; set; }
         [Inject] IEthereumHostProvider _ethereumHostProvider { get; set; }
         [Inject] NethereumAuthenticator _nethereumAuthenticator { get; set; }
@@ -119,6 +124,9 @@ namespace VotingClient.Pages.Bases
             StringValues initContract;
             StringValues initWinnerProposal;
             StringValues initIsVotingOver;
+            StringValues start;
+            StringValues end;
+
 
 
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
@@ -135,6 +143,12 @@ namespace VotingClient.Pages.Bases
             if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("isVotingOver", out initIsVotingOver))
                 IsVotingOver = Convert.ToBoolean(initIsVotingOver);
 
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("start", out start))
+                StartTimestamp = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(start));
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("end", out end))
+                EndTimestamp = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(end));
+
             await this.LoadAllProposalsAsync();
 
             IsVoted = await this.CheckIsVoted();
@@ -145,6 +159,17 @@ namespace VotingClient.Pages.Bases
 
 
             base.OnInitialized();
+        }
+
+        private StringValues? GetValueFromUrl(string value)
+        {
+            var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+
+            StringValues val;
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("id", out val))
+                return val;
+            else return null;
         }
 
 
