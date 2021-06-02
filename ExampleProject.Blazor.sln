@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nethereum.Erc20.Blazor", "N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nethereum.UI", "Nethereum.UI\Nethereum.UI.csproj", "{413C8C5B-EC70-41F6-9C67-CDDC44C99455}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleProject.Wasm", "ExampleProject.Wasm\ExampleProject.Wasm.csproj", "{BBEF0F1B-F19C-4011-A2A2-E84FB1733653}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VotingClient", "ExampleProject.Wasm\VotingClient.csproj", "{BBEF0F1B-F19C-4011-A2A2-E84FB1733653}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

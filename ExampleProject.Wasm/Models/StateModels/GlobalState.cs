@@ -1,4 +1,4 @@
-﻿namespace ExampleProject.Wasm.Models.StateModels
+﻿namespace VotingClient.Models.StateModels
 {
     public class GlobalState
     {

@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 using Nethereum.Metamask.Blazor;
 using Nethereum.Metamask;
 using FluentValidation;
-using ExampleProject.Wasm.Services;
-using ExampleProject.Wasm.Models.StateModels;
+using VotingClient.Services;
+using VotingClient.Models.StateModels;
 
-namespace ExampleProject.Wasm
+namespace VotingClient
 {
     public class Program
     {

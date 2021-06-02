@@ -1,7 +1,7 @@
-﻿using ExampleProject.Wasm.Models;
-using ExampleProject.Wasm.Models.StateModels;
-using ExampleProject.Wasm.Services;
-using ExampleProject.Wasm.Services.ContractServices;
+﻿using VotingClient.Models;
+using VotingClient.Models.StateModels;
+using VotingClient.Services;
+using VotingClient.Services.ContractServices;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExampleProject.Wasm.Pages.Bases
+namespace VotingClient.Pages.Bases
 {
     public class VotingBase : ComponentBase
     {

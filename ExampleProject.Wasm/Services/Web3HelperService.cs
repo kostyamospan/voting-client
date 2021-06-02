@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExampleProject.Wasm.Services
+namespace VotingClient.Services
 {
     public static class Web3HelperService
     {

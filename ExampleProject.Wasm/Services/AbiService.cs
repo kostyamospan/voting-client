@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace ExampleProject.Wasm.Services
+namespace VotingClient.Services
 {
     public class AbiService
     {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExampleProject.Wasm.Services.ContractServices
+namespace VotingClient.Services.ContractServices
 {
     public class VotingContractService
     {

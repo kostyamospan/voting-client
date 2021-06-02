@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExampleProject.Wasm.Models
+namespace VotingClient.Models
 {
     [FunctionOutput]
     public class GetProposalInfoResponse
