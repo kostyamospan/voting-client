@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject NavigationManager nav
-@using System.ComponentModel.DataAnnotations;
+@using System.ComponentModel.DataAnnotations
+@inject Models.StateModels.GlobalState state
 
 <div class="column align-items-center justify-content-center">
 
@@ -28,6 +29,8 @@
 
     protected void OnValidSubmit()
     {
+        state.ContractAddress = _formModel.ContractAddress;
+
         nav.NavigateTo($"/contract?contract={_formModel.ContractAddress}");
     }
 

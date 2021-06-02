@@ -16,11 +16,20 @@ namespace ExampleProject.Wasm.Services
             return await func.CallAsync<T>(args);
         }
 
-        public static async Task CreateTransactionAsync(Web3 web3,string from, string contractAddress, string abi, string methodName, params object[] args)
+        public static async Task<T> CallDeserializingToObjectAsync<T>(Web3 web3, string contractAddress, string abi, string methodName, params object[] args) where T : new()
         {
             var contract = web3.Eth.GetContract(abi, contractAddress);
             var func = contract.GetFunction(methodName);
-            await func.SendTransactionAsync(from,args);
+            return await func.CallDeserializingToObjectAsync<T>(args);
         }
-    } 
+
+
+        public static async Task CreateTransactionAsync(Web3 web3, string from, string contractAddress, string abi, string methodName, params object[] args)
+        {
+            var contract = web3.Eth.GetContract(abi, contractAddress);
+            var func = contract.GetFunction(methodName);
+
+            await func.SendTransactionAndWaitForReceiptAsync(from, new System.Threading.CancellationTokenSource(), args);
+        }
+    }
 }

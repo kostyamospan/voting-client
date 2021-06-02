@@ -3,14 +3,24 @@
 
 <h1>Voting</h1>
 
+
+@if (IsVoted)
+{
+    <h3 style="color:red">YOU ALREADY VOTED!</h3>
+}
+
 @if (Proposals != null)
 {
     @foreach (var prop in Proposals)
     {
         <div class="row">
-            <span>@prop</span>
-            <button @onclick="@(()=>OnVoteClick(prop))">Vote</button>
-        </div>
+            <span>@prop.Proposal - <b>@prop.VotingCount</b> votes</span>
 
+            @if (!IsVoted)
+            {
+                <button @onclick="@(async () => await OnVoteClick(prop.Proposal))">Vote</button>
+            }
+
+        </div>
     }
 }

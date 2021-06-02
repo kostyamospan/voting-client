@@ -1,0 +1,15 @@
+﻿.spinner {
+    width: 100px;
+    height: 100px;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dnone { 
+    display:none;
+}
+
+.dvisible {
+    display:block;
+}

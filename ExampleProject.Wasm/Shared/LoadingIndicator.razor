@@ -1,0 +1,8 @@
+﻿<div class="spinner @(!IsActive?"dnone" : "dvisible")">
+</div>
+
+@code {
+    [Parameter]
+    public bool IsActive { get; set; }
+
+}

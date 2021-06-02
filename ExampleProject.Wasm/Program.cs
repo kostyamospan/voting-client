@@ -12,6 +12,7 @@ using Nethereum.Metamask.Blazor;
 using Nethereum.Metamask;
 using FluentValidation;
 using ExampleProject.Wasm.Services;
+using ExampleProject.Wasm.Models.StateModels;
 
 namespace ExampleProject.Wasm
 {
@@ -30,6 +31,8 @@ namespace ExampleProject.Wasm
 
             builder.Services.AddSingleton<MetamaskInterceptor>();
             builder.Services.AddSingleton<MetamaskHostProvider>();
+
+            builder.Services.AddSingleton<GlobalState>();
 
             builder.Services.AddSingleton<IEthereumHostProvider>(serviceProvider =>
             {

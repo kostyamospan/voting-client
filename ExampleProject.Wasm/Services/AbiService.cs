@@ -16,21 +16,23 @@ namespace ExampleProject.Wasm.Services
             _baseUrl = baseUrl;
         }
 
-        public string VotingContractFileName => "";
+        public string VotingContractFileName => "VoterERC20.json";
+
+        public string IERC20ContractFileName => "IERC20.json";
+
 
         public async Task<string> GetAbiContractAsync(string abiFileName)
         {
-            if (_votingContractAbi != null) return _votingContractAbi;
 
             using (var httpClient = new HttpClient())
-                _votingContractAbi = JsonConvert.SerializeObject(JObject.Parse(await httpClient.GetStringAsync(_baseUrl + "/VoterERC20.json")).GetValue("abi"));
+            {
+                httpClient.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
 
-            return _votingContractAbi;
+                return  JsonConvert.SerializeObject(JObject.Parse(await httpClient.GetStringAsync($"{_baseUrl}/{abiFileName}")).GetValue("abi"));
+
+            }
         }
 
-
         private string _baseUrl;
-
-        private string _votingContractAbi;
     }
 }

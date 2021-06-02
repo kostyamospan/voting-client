@@ -1,26 +1,62 @@
 ﻿@page "/contract"
 @inherits Pages.IndexBase
+@using Pages.Bases;
+@using Models;
 
 <h1>INDEX PAGE</h1>
 
 <div class="main column">
     <div class="row">
-        <div class="btn btn-create" @onclick="OnCreateBtnClick">Create voting</div>
+        <div class="btn btn-primary" @onclick="OnCreateBtnClick">Create voting</div>
 
-        <div class="btn btn-get-all" @onclick="OnGetVotingsBtnClick">Get all votings</div>
+        <div class="btn btn-secondary" @onclick="OnGetVotingsBtnClick">Get all votings</div>
     </div>
 
-    @if (VotingsCount > 0)
+    @if (Votings is not null)
     {
         <ul class="voting-list">
 
-            @for (int i = 0; i < VotingsCount; i++)
+            @for (int i = 0; i < Votings.Count; i++)
             {
-                <a href="@($"/voting?id={i}&contract={ContractAddress}")"><li>@i</li></a>
+                int index = i;
+                <li class="row justify-content-center align-items-center">
+                    <div>
+
+                        <a href="" @onclick=@(()=>
+                                              {
+                                                  State.Voting = Votings[index];
+                                                  NavManager.NavigateTo($"/voting?id={index}&contract={ContractAddress}");
+                                              }) @onclick:preventDefault>
+                            @index
+                        </a>
+                        <ul>
+                            <li>Status: @((VotingStatus)Votings[index].VotingStatus)</li>
+                            <li>Duration: @(Votings[index].Duration) </li>
+                            <li>Start Date: @(DateTimeOffset.FromUnixTimeSeconds(Votings[index].Duration).DateTime.ToShortDateString())</li>
+                            <li>Count of Proposals: @Votings[index].ProposalsCount</li>
+
+                            @if (Votings[index].VotingStatus == (int)VotingStatus.Finished)
+                            {
+                                <li style="color:forestgreen">Winner proposal is: <b>@Votings[index].WinnerProposal</b></li>
+                            }
+                        </ul>
+                    </div>
+                    @if (Votings[index].VotingStatus != (int)VotingStatus.Finished)
+                    {
+
+                        <div>
+                            <button class="btn btn-outline-secondary" @onclick="@(async ()=>await OnEndVotingsBtnClick(index))">
+                                End Voting
+                            </button>
+                        </div>
+                    }
+
+                </li>
+
             }
 
         </ul>
     }
-
-
 </div>
+
+<LoadingIndicator IsActive="IsLoadingIndicatorVisible" />

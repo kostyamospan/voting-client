@@ -1,8 +1,11 @@
-﻿using ExampleProject.Wasm.Services;
+﻿using ExampleProject.Wasm.Models;
+using ExampleProject.Wasm.Models.StateModels;
+using ExampleProject.Wasm.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using Microsoft.JSInterop;
+using Nethereum.ABI.FunctionEncoding.Attributes;
 using Nethereum.Hex.HexTypes;
 using Nethereum.UI;
 using Nethereum.Web3;
@@ -13,26 +16,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
 
 namespace ExampleProject.Wasm.Pages
 {
+
     public class IndexBase : ComponentBase
     {
         public string ContractAddress { get; set; }
 
         public string SelectedAccount { get; private set; }
 
+        public bool IsLoadingIndicatorVisible { get; set; } 
 
         protected string AuthenticatedAccount { get; set; }
 
-        protected int VotingsCount { get; set; }
+        protected List<Models.Voting> Votings { get; set; }
 
+        [Inject] public NavigationManager NavManager { get; set; }
+        [Inject] public GlobalState State { get; set; }
         [Inject] IEthereumHostProvider _ethereumHostProvider { get; set; }
         [Inject] NethereumAuthenticator _nethereumAuthenticator { get; set; }
-        [Inject] NavigationManager NavManager { get; set; }
         [Inject] AbiService AbiService { get; set; }
         [Inject] IJSRuntime JSr { get; set; }
+
+        private Web3 web3;
+
+
+        public IndexBase()
+        {
+            web3 = new Web3("http://localhost:8545");
+        }
 
         protected async Task OnCreateBtnClick()
         {
@@ -44,9 +57,30 @@ namespace ExampleProject.Wasm.Pages
             await this.LoadAllVotings();
         }
 
+        protected async Task OnEndVotingsBtnClick(int id)
+        {
+            await this.EndVoting(id);
+            Votings[id].VotingStatus = (int)VotingStatus.Finished;
 
+            this.StateHasChanged();
+        }
 
+        protected async Task<string> GetWinnerProposal(int id)
+        {
+            string abi = await AbiService.GetAbiContractAsync(AbiService.VotingContractFileName);
 
+            return await Web3HelperService.CallAsync<string>(web3, ContractAddress, abi, "getWinnerProposal", id);
+        }
+
+        private async Task EndVoting(int id)
+        {
+            Console.WriteLine("Id is " + id);
+            var web3 = await _ethereumHostProvider.GetWeb3Async();
+
+            string abi = await AbiService.GetAbiContractAsync(AbiService.VotingContractFileName);
+
+            await Web3HelperService.CreateTransactionAsync(web3, SelectedAccount, ContractAddress, abi, "endVoting", id);
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -97,11 +131,22 @@ namespace ExampleProject.Wasm.Pages
 
         private async Task LoadAllVotings()
         {
-            var web3 = new Web3("http://localhost:8545");
+            IsLoadingIndicatorVisible = true;
 
             string abi = await AbiService.GetAbiContractAsync(AbiService.VotingContractFileName);
 
-            VotingsCount = await Web3HelperService.CallAsync<int>(web3, ContractAddress, abi, "getVotingsCount");
+            Votings = await Web3HelperService.CallAsync<List<Models.Voting>>(web3, ContractAddress, abi, "getAllVotings");
+
+            this.StateHasChanged();
+
+            IsLoadingIndicatorVisible = false;
+
+            for (int i = 0; i < Votings.Count; i++)
+            {
+                if (Votings[i].VotingStatus != (int)VotingStatus.Finished) continue;
+
+                Votings[i].WinnerProposal = await GetWinnerProposal(i);
+            }
         }
     }
 }
