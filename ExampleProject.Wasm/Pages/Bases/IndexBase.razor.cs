@@ -1,6 +1,7 @@
 ﻿using ExampleProject.Wasm.Models;
 using ExampleProject.Wasm.Models.StateModels;
 using ExampleProject.Wasm.Services;
+using ExampleProject.Wasm.Services.ContractServices;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
@@ -26,7 +27,7 @@ namespace ExampleProject.Wasm.Pages
 
         public string SelectedAccount { get; private set; }
 
-        public bool IsLoadingIndicatorVisible { get; set; } 
+        public bool IsLoadingIndicatorVisible { get; set; }
 
         protected string AuthenticatedAccount { get; set; }
 
@@ -59,28 +60,18 @@ namespace ExampleProject.Wasm.Pages
 
         protected async Task OnEndVotingsBtnClick(int id)
         {
-            await this.EndVoting(id);
+            var s = new VotingContractService(await _ethereumHostProvider.GetWeb3Async(), AbiService);
+
+            await s.EndVoting(id, SelectedAccount, ContractAddress);
+
             Votings[id].VotingStatus = (int)VotingStatus.Finished;
 
             this.StateHasChanged();
         }
 
-        protected async Task<string> GetWinnerProposal(int id)
-        {
-            string abi = await AbiService.GetAbiContractAsync(AbiService.VotingContractFileName);
 
-            return await Web3HelperService.CallAsync<string>(web3, ContractAddress, abi, "getWinnerProposal", id);
-        }
 
-        private async Task EndVoting(int id)
-        {
-            Console.WriteLine("Id is " + id);
-            var web3 = await _ethereumHostProvider.GetWeb3Async();
 
-            string abi = await AbiService.GetAbiContractAsync(AbiService.VotingContractFileName);
-
-            await Web3HelperService.CreateTransactionAsync(web3, SelectedAccount, ContractAddress, abi, "endVoting", id);
-        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -125,7 +116,13 @@ namespace ExampleProject.Wasm.Pages
                 proposals,
                 duration);
 
-            Console.WriteLine(propPrompted);
+            Votings.Add(new()
+            {
+                CreationTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                Duration = duration,
+                VotingStatus = 0,
+                ProposalsCount = proposals.Count()
+            });
         }
 
 
@@ -141,11 +138,14 @@ namespace ExampleProject.Wasm.Pages
 
             IsLoadingIndicatorVisible = false;
 
+            var s = new VotingContractService(web3, AbiService);
+
             for (int i = 0; i < Votings.Count; i++)
             {
                 if (Votings[i].VotingStatus != (int)VotingStatus.Finished) continue;
 
-                Votings[i].WinnerProposal = await GetWinnerProposal(i);
+                Votings[i].WinnerProposal = await s.GetWinnerProposal(i, ContractAddress);
+                this.StateHasChanged();
             }
         }
     }

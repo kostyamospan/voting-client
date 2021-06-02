@@ -1,6 +1,7 @@
 ﻿using ExampleProject.Wasm.Models;
 using ExampleProject.Wasm.Models.StateModels;
 using ExampleProject.Wasm.Services;
+using ExampleProject.Wasm.Services.ContractServices;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
@@ -16,14 +17,17 @@ namespace ExampleProject.Wasm.Pages.Bases
 {
     public class VotingBase : ComponentBase
     {
-
         public bool IsVoted { get; set; }
+
+        public bool IsVotingOver { get; set; }
 
         public int VotingId { get; set; }
 
         public string ContractAddress { get; set; }
 
         public List<GetProposalInfoResponse> Proposals { get; set; }
+
+        public string WinnerProposal { get; set; }
 
         public string SelectedAccount { get; private set; }
 
@@ -52,21 +56,23 @@ namespace ExampleProject.Wasm.Pages.Bases
             SelectedAccount = arg;
         }
 
+        protected async Task OnEndVotingsBtnClick()
+        {
+            var s = new VotingContractService(await _ethereumHostProvider.GetWeb3Async(), AbiService);
+            await s.EndVoting(VotingId, SelectedAccount, ContractAddress);
+            IsVotingOver = true;
 
+            s.web3 = this.web3;
 
-
+            WinnerProposal = await s.GetWinnerProposal(VotingId, ContractAddress);
+            this.StateHasChanged();
+        }
 
         public async Task LoadAllProposalsAsync()
         {
-
-
             string abi = await AbiService.GetAbiContractAsync(AbiService.VotingContractFileName);
 
             Proposals = await Web3HelperService.CallAsync<List<GetProposalInfoResponse>>(web3, ContractAddress, abi, "getAllProposals", VotingId);
-
-            IsVoted = await this.CheckIsVoted();
-
-            this.StateHasChanged();
         }
 
 
@@ -111,6 +117,8 @@ namespace ExampleProject.Wasm.Pages.Bases
 
             StringValues initId;
             StringValues initContract;
+            StringValues initWinnerProposal;
+            StringValues initIsVotingOver;
 
 
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
@@ -121,7 +129,20 @@ namespace ExampleProject.Wasm.Pages.Bases
             if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("contract", out initContract))
                 ContractAddress = Convert.ToString(initContract);
 
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("winnerProposal", out initWinnerProposal))
+                WinnerProposal = Convert.ToString(initWinnerProposal);
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("isVotingOver", out initIsVotingOver))
+                IsVotingOver = Convert.ToBoolean(initIsVotingOver);
+
             await this.LoadAllProposalsAsync();
+
+            IsVoted = await this.CheckIsVoted();
+
+            Console.WriteLine(IsVoted);
+
+            this.StateHasChanged();
+
 
             base.OnInitialized();
         }

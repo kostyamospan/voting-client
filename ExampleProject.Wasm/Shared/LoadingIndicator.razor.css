@@ -1,9 +1,6 @@
 ﻿.spinner {
-    width: 100px;
-    height: 100px;
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
 }
 
 .dnone { 

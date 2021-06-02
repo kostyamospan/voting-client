@@ -1,26 +1,71 @@
 ﻿@page "/voting"
 @inherits Bases.VotingBase
 
-<h1>Voting</h1>
+<h1>Voting @VotingId</h1>
 
 
-@if (IsVoted)
+@if (IsVotingOver)
+{
+
+    <h3 style="color:red">THIS VOTING IS OVER!</h3>
+}
+else if (IsVoted)
 {
     <h3 style="color:red">YOU ALREADY VOTED!</h3>
 }
 
 @if (Proposals != null)
 {
-    @foreach (var prop in Proposals)
-    {
-        <div class="row">
-            <span>@prop.Proposal - <b>@prop.VotingCount</b> votes</span>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">
+                    Proposal Name
+                </th>
+                <th scope="col">
+                    Votes count
+                </th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
 
-            @if (!IsVoted)
+            @foreach (var prop in Proposals)
             {
-                <button @onclick="@(async () => await OnVoteClick(prop.Proposal))">Vote</button>
+                <tr>
+                    <td>
+                        @prop.Proposal
+                    </td>
+
+                    <td>
+                        @prop.VotingCount
+                    </td>
+
+                    <td>
+                        @if (!IsVoted && !IsVotingOver)
+                        {
+                            <button class="btn btn-outline-primary" @onclick="@(async () => await OnVoteClick(prop.Proposal))">Vote</button>
+                        }
+                    </td>
+
+                </tr>
             }
 
-        </div>
+
+        </tbody>
+
+    </table>
+    if (WinnerProposal is not null && IsVotingOver)
+    {
+        <h3 style="color:green">Winner proposal is: @WinnerProposal</h3>
     }
+    else
+    {
+        <button class="btn btn-outline-secondary" @onclick="(async ()=> await OnEndVotingsBtnClick())">End Voting</button>
+    }
+
+}
+else
+{
+    <span>Loading...</span>
 }

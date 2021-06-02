@@ -13,10 +13,10 @@ namespace ExampleProject.Wasm.Models
         public int VotingStatus { get; set; }
 
         [Parameter("uint256")]
-        public int CreationTimestamp { get; set; }
+        public long CreationTimestamp { get; set; }
 
         [Parameter("uint256")]
-        public int Duration { get; set; }
+        public long Duration { get; set; }
 
         [Parameter("uint256")]
         public int ProposalsCount { get; set; }

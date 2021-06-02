@@ -19,25 +19,36 @@
             @for (int i = 0; i < Votings.Count; i++)
             {
                 int index = i;
-                <li class="row justify-content-center align-items-center">
+                <li class="row align-items-center">
                     <div>
 
                         <a href="" @onclick=@(()=>
                                               {
                                                   State.Voting = Votings[index];
-                                                  NavManager.NavigateTo($"/voting?id={index}&contract={ContractAddress}");
+                                                  NavManager.NavigateTo($"/voting?id={index}&contract={ContractAddress}&isVotingOver={Votings[index].VotingStatus == (int)VotingStatus.Finished}&winnerProposal={Votings[index].WinnerProposal}");
                                               }) @onclick:preventDefault>
                             @index
                         </a>
+                        @*Votings[index].WinnerProposal is null ? "" :  $""*@
                         <ul>
                             <li>Status: @((VotingStatus)Votings[index].VotingStatus)</li>
-                            <li>Duration: @(Votings[index].Duration) </li>
-                            <li>Start Date: @(DateTimeOffset.FromUnixTimeSeconds(Votings[index].Duration).DateTime.ToShortDateString())</li>
+                            <li>Start: @(DateTimeOffset.FromUnixTimeSeconds(Votings[index].CreationTimestamp).DateTime.ToString())</li>
+                            <li>End: @(DateTimeOffset.FromUnixTimeSeconds(Votings[index].Duration + Votings[index].CreationTimestamp).DateTime.ToString()) </li>
                             <li>Count of Proposals: @Votings[index].ProposalsCount</li>
 
                             @if (Votings[index].VotingStatus == (int)VotingStatus.Finished)
                             {
-                                <li style="color:forestgreen">Winner proposal is: <b>@Votings[index].WinnerProposal</b></li>
+                                <li style="color:forestgreen">
+                                    Winner proposal is:
+                                    @if (Votings[index].WinnerProposal is not null)
+                                    {
+                                        <b>@Votings[index].WinnerProposal</b>
+                                    }
+                                    else
+                                    {
+                                        <span>Loading...</span>
+                                    }
+                                </li>
                             }
                         </ul>
                     </div>
@@ -59,4 +70,3 @@
     }
 </div>
 
-<LoadingIndicator IsActive="IsLoadingIndicatorVisible" />
