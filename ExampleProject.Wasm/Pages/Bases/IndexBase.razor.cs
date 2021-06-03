@@ -60,9 +60,13 @@ namespace VotingClient.Pages
 
         protected async Task OnEndVotingsBtnClick(int id)
         {
-            var s = new VotingContractService(await _ethereumHostProvider.GetWeb3Async(), AbiService);
+            var s = new VotingContractService(await _ethereumHostProvider.GetWeb3Async(), AbiService, ContractAddress);
 
-            await s.EndVoting(id, SelectedAccount, ContractAddress);
+            await s.EndVoting(id, SelectedAccount);
+
+            s.ChangeWeb3Provider(web3);
+
+            Votings[id].WinnerProposal = await s.GetWinnerProposal(id);
 
             Votings[id].VotingStatus = (int)VotingStatus.Finished;
 
@@ -116,7 +120,7 @@ namespace VotingClient.Pages
                 proposals,
                 duration);
 
-            Votings.Add(new()
+            Votings?.Add(new()
             {
                 CreationTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
                 Duration = duration,
@@ -138,13 +142,16 @@ namespace VotingClient.Pages
 
             IsLoadingIndicatorVisible = false;
 
-            var s = new VotingContractService(web3, AbiService);
+            var s = new VotingContractService(web3, AbiService,ContractAddress);
 
             for (int i = 0; i < Votings.Count; i++)
             {
+                Votings[i].CreationTimestamp += 120;
+       
+
                 if (Votings[i].VotingStatus != (int)VotingStatus.Finished) continue;
 
-                Votings[i].WinnerProposal = await s.GetWinnerProposal(i, ContractAddress);
+                Votings[i].WinnerProposal = await s.GetWinnerProposal(i);
                 this.StateHasChanged();
             }
         }

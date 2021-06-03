@@ -63,13 +63,13 @@ namespace VotingClient.Pages.Bases
 
         protected async Task OnEndVotingsBtnClick()
         {
-            var s = new VotingContractService(await _ethereumHostProvider.GetWeb3Async(), AbiService);
-            await s.EndVoting(VotingId, SelectedAccount, ContractAddress);
+            var s = new VotingContractService(await _ethereumHostProvider.GetWeb3Async(), AbiService,ContractAddress);
+            await s.EndVoting(VotingId, SelectedAccount);
             IsVotingOver = true;
 
             s.web3 = this.web3;
 
-            WinnerProposal = await s.GetWinnerProposal(VotingId, ContractAddress);
+            WinnerProposal = await s.GetWinnerProposal(VotingId);
             this.StateHasChanged();
         }
 
@@ -109,7 +109,7 @@ namespace VotingClient.Pages.Bases
                 VotingId,
                 prop);
 
-            Proposals.FirstOrDefault(x => x.Proposal == prop).VotingCount += await GetBalance();
+            NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
 
             this.StateHasChanged();
         }

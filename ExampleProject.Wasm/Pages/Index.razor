@@ -14,58 +14,66 @@
 
     @if (Votings is not null)
     {
-        <ul class="voting-list">
 
-            @for (int i = 0; i < Votings.Count; i++)
-            {
-                int index = i;
-                <li class="row align-items-center">
-                    <div>
+        if (Votings.Count != 0)
+        {
+            <ul class="voting-list">
 
-                        <a href="" @onclick=@(()=>
+                @for (int i = 0; i < Votings.Count; i++)
+                {
+                    int index = i;
+                    <li class="row align-items-center">
+                        <div>
+
+                            <a href="" @onclick=@(()=>
                                               {
                                                   State.Voting = Votings[index];
                                                   NavManager.NavigateTo($"/voting?id={index}&contract={ContractAddress}&isVotingOver={Votings[index].VotingStatus == (int)VotingStatus.Finished}&winnerProposal={Votings[index].WinnerProposal}&start={Votings[index].CreationTimestamp}&end={Votings[index].CreationTimestamp + Votings[index].Duration}");
                                               }) @onclick:preventDefault>
-                            @index
-                        </a>
-                        <ul>
-                            <li>Status: @((VotingStatus)Votings[index].VotingStatus)</li>
-                            <li>Start: @(DateTimeOffset.FromUnixTimeSeconds(Votings[index].CreationTimestamp).DateTime.ToString())</li>
-                            <li>End: @(DateTimeOffset.FromUnixTimeSeconds(Votings[index].Duration + Votings[index].CreationTimestamp).DateTime.ToString()) </li>
-                            <li>Count of Proposals: @Votings[index].ProposalsCount</li>
+                                @index
+                            </a>
+                            <ul>
+                                <li>Status: @((VotingStatus)Votings[index].VotingStatus)</li>
+                                <li>Start: @(DateTimeOffset.FromUnixTimeSeconds(Votings[index].CreationTimestamp).DateTime.ToString())</li>
+                                <li>End: @(DateTimeOffset.FromUnixTimeSeconds(Votings[index].Duration + Votings[index].CreationTimestamp).DateTime.ToString()) </li>
+                                <li>Count of Proposals: @Votings[index].ProposalsCount</li>
 
-                            @if (Votings[index].VotingStatus == (int)VotingStatus.Finished)
-                            {
-                                <li style="color:forestgreen">
-                                    Winner proposal is:
-                                    @if (Votings[index].WinnerProposal is not null)
-                                    {
-                                        <b>@Votings[index].WinnerProposal</b>
-                                    }
-                                    else
-                                    {
-                                        <span>Loading...</span>
-                                    }
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                    @if (Votings[index].VotingStatus != (int)VotingStatus.Finished && (Votings[index].CreationTimestamp + Votings[index].Duration) < DateTimeOffset.Now.ToUnixTimeSeconds())
-                    {
-
-                        <div>
-                            <button class="btn btn-outline-secondary" @onclick="@(async ()=>await OnEndVotingsBtnClick(index))">
-                                End Voting
-                            </button>
+                                @if (Votings[index].VotingStatus == (int)VotingStatus.Finished)
+                                {
+                                    <li style="color:forestgreen">
+                                        Winner proposal is:
+                                        @if (Votings[index].WinnerProposal is not null)
+                                        {
+                                            <b>@Votings[index].WinnerProposal</b>
+                                        }
+                                        else
+                                        {
+                                            <span>Loading...</span>
+                                        }
+                                    </li>
+                                }
+                            </ul>
                         </div>
-                    }
+                        @if (Votings[index].VotingStatus != (int)VotingStatus.Finished && (Votings[index].CreationTimestamp + Votings[index].Duration) < DateTimeOffset.Now.ToUnixTimeSeconds())
+                        {
 
-                </li>
+                            <div>
+                                <button class="btn btn-outline-secondary" @onclick="@(async ()=>await OnEndVotingsBtnClick(index))">
+                                    End Voting
+                                </button>
+                            </div>
+                        }
 
-            }
+                    </li>
 
-        </ul>
+                }
+
+            </ul>
+        }
+        else
+        {
+            <span style="color:orange">No votings :( </span>
+        }
     }
 </div>
 
